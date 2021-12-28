@@ -19,9 +19,9 @@ cifar10Root = "/home/hcl/workspace/DataSet/"
 
 DataSetRoot = "/home/hcl/workspace/DataSet/MineCars"
 
-TrainInfoRoot = '/home/hcl/workspace/vit-pytorch/trainInfo/'
+TrainInfoRoot = './trainInfo/'
 
-ModelSaveRoot = '/home/hcl/workspace/vit-pytorch/weights/'
+ModelSaveRoot = './weights/'
 
 # 预设参数
 NUMCLASS = 3

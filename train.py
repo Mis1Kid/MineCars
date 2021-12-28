@@ -6,6 +6,7 @@ from model.resnet import ResNet
 from tools.utils import validate
 from torch.utils.tensorboard import SummaryWriter
 from model.denseNet import DenseNet121
+from tqdm import tqdm
 import os
 # res = ResNet(**config['Res']).to(device)
 res = ResNet([3, 4, 23, 3])
@@ -18,6 +19,7 @@ def trainOneEpoch(model, trainloader, epoch, optimizer, device, checkpoint=None)
     accu_loss = torch.zeros(1).to(device)  # 累计损失
     accu_num = torch.zeros(1).to(device)   # 累计预测正确的样本数
     total_num = 0
+    trainloader=tqdm(trainloader)
     for batchIndex, (data, labels) in enumerate(trainloader):
         data = data.to(device)
         labels = labels.to(device)
@@ -32,8 +34,7 @@ def trainOneEpoch(model, trainloader, epoch, optimizer, device, checkpoint=None)
         # train loss
         accu_loss += loss.detach()
         # print train info
-        if batchIndex % 10==0 and batchIndex!=0:
-            print("[train epoch {}] loss: {:.3f}, acc: {:.3f}".format(epoch,
+        trainloader.desc=("[train epoch {}] loss: {:.3f}, acc: {:.3f}".format(epoch,
                                                                   accu_loss.item() / (batchIndex + 1),
                                                                   accu_num.item() / total_num))
         optimizer.step()
@@ -76,7 +77,7 @@ def train(trainloader, testloader, model, optimizer, scheduler, device, modelSav
         # save model
         state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict(),
                  'scheduler': scheduler.state_dict(), 'epoch': epoch}
-        if not os.path.exist(modelSavePath):
+        if not os.path.exists(modelSavePath):
             os.mkdir(modelSavePath)
         torch.save(state, modelSavePath +
                    'checkpoint-epoch-{}.pth'.format(epoch))
